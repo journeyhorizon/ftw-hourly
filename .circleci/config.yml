@@ -8,21 +8,6 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: false
       - checkout
-      - restore_cache:
-          name: Restore npm Package Cache
-          keys:
-            - npm-packages-{{ .Branch }}-{{ checksum "package.json" }}
-            - npm-packages-{{ .Branch }}
-            - npm-packages-master
-            - npm-packages-
-      - run:
-          name: Install Dependencies
-          command: npm install
-      - save_cache:
-          name: Save npm Package Cache
-          key: npm-packages-{{ .Branch }}-{{ checksum "package.json" }}
-          paths:
-            - node_modules/
       - run:
           name: Install AWS CLI
           command: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install
