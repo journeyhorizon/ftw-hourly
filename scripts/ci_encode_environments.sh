@@ -7,7 +7,6 @@ source ./scripts/set_environment.sh
 echo -e "${COLOR}:::::::::::::CircleCI Detected::::::::::::::${NC}"
   echo "npm-debug.log\nyarn-error.log" > .dockerignore
   export AWS_PRIVATE_KEY_PATH='permission.pem'
-  cp Dockerfile_ci Dockerfile
 
 if [[ "$CIRCLE_BRANCH" == "main" ]] || [[ "$CIRCLE_BRANCH" == "production" ]] ; then
   # todo: set up aws credentials for getting the env file
