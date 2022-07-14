@@ -4,7 +4,7 @@ ADD ./ ./
 
 ENV NODE_ENV "production"
 
-RUN npm run build
+RUN yarn install && yarn run build
 
 EXPOSE 3000 443
 
