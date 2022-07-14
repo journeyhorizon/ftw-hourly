@@ -43,3 +43,4 @@ if [ "$CIRCLECI" == "true" ]; then
     echo -e "${COLOR}:::::::::Exiting:::::::::${NC}"
     exit 0
   fi
+fi
