@@ -1,101 +1,48 @@
 version: 2
 jobs:
-  format:
-    docker:
-      - image: cimg/node:14.19
-    steps:
-      - checkout
-      - restore_cache:
-          name: Restore Yarn Package Cache
-          keys:
-            - yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - yarn-packages-{{ .Branch }}
-            - yarn-packages-master
-            - yarn-packages-
-      - run:
-          name: Install Dependencies
-          command: yarn install
-      - save_cache:
-          name: Save Yarn Package Cache
-          key: yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules/
-      - run:
-          name: Check code formatting
-          command: yarn run format-ci
-  test:
-    docker:
-      - image: cimg/node:14.19
-    steps:
-      - checkout
-      - restore_cache:
-          name: Restore Yarn Package Cache
-          keys:
-            - yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - yarn-packages-{{ .Branch }}
-            - yarn-packages-master
-            - yarn-packages-
-      - run:
-          name: Install Dependencies
-          command: yarn install
-      - save_cache:
-          name: Save Yarn Package Cache
-          key: yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules/
-      - run:
-          name: Run test suite
-          command: yarn run test-ci
   build:
     docker:
-      - image: cimg/node:14.19
+      - image: circleci/node:16.13.1
+#    machine: true
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: false
       - checkout
       - restore_cache:
-          name: Restore Yarn Package Cache
+          name: Restore npm Package Cache
           keys:
-            - yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - yarn-packages-{{ .Branch }}
-            - yarn-packages-master
-            - yarn-packages-
+            - npm-packages-{{ .Branch }}-{{ checksum "package.json" }}
+            - npm-packages-{{ .Branch }}
+            - npm-packages-master
+            - npm-packages-
       - run:
           name: Install Dependencies
-          command: yarn install
+          command: npm install
       - save_cache:
-          name: Save Yarn Package Cache
-          key: yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          name: Save npm Package Cache
+          key: npm-packages-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - node_modules/
       - run:
-          name: Build client application
-          command: yarn run build
-  audit:
-    docker:
-      - image: cimg/node:14.19
-    steps:
-      - checkout
-      - restore_cache:
-          name: Restore Yarn Package Cache
-          keys:
-            - yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - yarn-packages-{{ .Branch }}
-            - yarn-packages-master
-            - yarn-packages-
+          name: Install AWS CLI
+          command: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install
       - run:
-          name: Install Dependencies
-          command: yarn install
-      - save_cache:
-          name: Save Yarn Package Cache
-          key: yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules/
+          name: Install jq
+          command: sudo apt-get install jq
       - run:
-          name: Audit dependencies
-          command: yarn run audit
+          name: Copy Environment File
+          command: ./scripts/ci_encode_environments.sh
+      - run:
+          name: Run deploy script
+          command: ./scripts/deploy.sh
+
 workflows:
   version: 2
-  format_test_build_audit:
+  build:
     jobs:
-      - format
-      - test
-      - build
+      - build:
+          filters:
+            branches:
+              only:
+                - production
+
