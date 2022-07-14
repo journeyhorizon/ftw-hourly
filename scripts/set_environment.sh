@@ -23,7 +23,7 @@ if [ "$ENV" == "production" ] || [ "$CIRCLE_BRANCH" == "production" ]; then
   # todo: REPLACE HERE: environment for Production instance
   # Production could be deployed on different region from test (Ex: client in Aus but marketplace is for US)
   export AWS_INSTANCE_REGION='us-west-1'
-  export AWS_ECR_REPO_NAME='web-fargate-test'
+  export AWS_ECR_REPO_NAME='web-test-fargate'
   export AWS_ECR_REPO_URL="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_INSTANCE_REGION}.amazonaws.com/${AWS_ECR_REPO_NAME}:latest"
   export ENV_FILE_PATH='.env.prod'
   export ENV_NAME='PRODUCTION'
