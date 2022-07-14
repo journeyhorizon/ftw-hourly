@@ -8,4 +8,4 @@ RUN yarn install && yarn run build
 
 EXPOSE 3000 443
 
-CMD ["npm", "run", "start"]
+CMD ["yarn", "run", "start"]
