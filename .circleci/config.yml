@@ -7,6 +7,7 @@ jobs:
     steps:
       - setup_remote_docker:
           docker_layer_caching: false
+          version: 20.10.14
       - checkout
       - run:
           name: Install AWS CLI
