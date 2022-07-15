@@ -2,9 +2,9 @@ FROM node:16.16.0
 
 ADD ./ ./
 
-ENV NODE_ENV "production"
+RUN npm install && npm run build
 
-RUN npm run build
+ENV NODE_ENV "production"
 
 EXPOSE 3000 443
 
